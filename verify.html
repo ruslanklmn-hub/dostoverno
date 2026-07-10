@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Проверка подлинности сертификата — Серталис</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<style>
+:root{
+  --bg:#070b16;--bg-2:#0b1120;--panel:#0f1729;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.14);
+  --text:#eef2ff;--muted:#9aa8c7;--muted-2:#6b789a;
+  --cyan:#3fe0d0;--blue:#4f8bff;--violet:#8b7bff;--green:#37e59a;--amber:#ffcb6b;--red:#ff6b6b;
+  --grad:linear-gradient(120deg,var(--cyan),var(--blue) 55%,var(--violet));
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+h1,h2,.dsp{font-family:'Manrope','Inter',sans-serif;letter-spacing:-.02em}
+a{color:var(--cyan)}
+.wrap{max-width:560px;margin:0 auto;padding:0 22px}
+header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(7,11,22,.85);backdrop-filter:blur(12px);z-index:10}
+.nav{display:flex;align-items:center;justify-content:space-between;height:66px;max-width:560px;margin:0 auto;padding:0 22px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Manrope';font-weight:800;font-size:18px;text-decoration:none;color:var(--text)}
+.logo-mark{width:30px;height:30px;border-radius:8px;background:var(--grad);display:grid;place-items:center}
+.logo-mark svg{width:17px;height:17px}
+.back{color:var(--muted);font-size:14px;text-decoration:none}
+.back:hover{color:var(--text)}
+
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;z-index:0;pointer-events:none}
+.orb-1{width:440px;height:440px;background:radial-gradient(circle,#1c3d7a,transparent 70%);top:-160px;right:-120px}
+
+main{position:relative;z-index:1;padding:48px 0 80px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);padding:6px 13px;border:1px solid var(--line-2);border-radius:100px;background:rgba(63,224,208,.06)}
+h1{font-size:clamp(26px,4.5vw,34px);font-weight:800;margin:18px 0 10px}
+.sub{color:var(--muted);font-size:15.5px;margin-bottom:28px}
+
+.search{display:flex;gap:10px;margin-bottom:8px}
+.search input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:12px;padding:14px 16px;color:var(--text);font-family:inherit;font-size:16px;letter-spacing:.02em}
+.search input:focus{outline:none;border-color:var(--cyan);background:rgba(63,224,208,.05)}
+.search button{border:none;cursor:pointer;background:var(--grad);color:#05122a;font-weight:700;font-size:15px;padding:0 22px;border-radius:12px}
+.hint{font-size:12.5px;color:var(--muted-2)}
+
+.result{margin-top:26px;display:none}
+.result.on{display:block}
+.rcard{background:linear-gradient(165deg,var(--panel),var(--bg-2));border:1px solid var(--line-2);border-radius:18px;padding:26px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.status{display:flex;align-items:center;gap:13px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.status .badge{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;flex-shrink:0}
+.status .badge svg{width:28px;height:28px}
+.status h2{font-size:21px;font-weight:800}
+.status .st-sub{font-size:13.5px;color:var(--muted)}
+.ok .badge{background:rgba(55,229,154,.14);color:var(--green)}
+.ok h2{color:var(--green)}
+.expired .badge{background:rgba(255,203,107,.14);color:var(--amber)}
+.expired h2{color:var(--amber)}
+.revoked .badge,.notfound .badge{background:rgba(255,107,107,.14);color:var(--red)}
+.revoked h2,.notfound h2{color:var(--red)}
+
+.rrow{display:flex;justify-content:space-between;gap:14px;padding:9px 0;font-size:14.5px;border-bottom:1px solid var(--line)}
+.rrow:last-child{border:none}
+.rrow .k{color:var(--muted)}
+.rrow .v{font-weight:600;text-align:right}
+.checks-line{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
+.tag{font-size:12px;font-weight:600;padding:4px 10px;border-radius:100px;background:rgba(63,224,208,.12);color:var(--cyan)}
+.privacy{font-size:12px;color:var(--muted-2);margin-top:16px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<header><div class="nav">
+  <a href="index.html" class="logo"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4-4.5" stroke="#05122a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Серталис</a>
+  <a href="index.html" class="back">← На сайт</a>
+</div></header>
+
+<main><div class="wrap">
+  <span class="eyebrow">● Проверка подлинности</span>
+  <h1>Проверить сертификат</h1>
+  <p class="sub">Введите номер сертификата (ID), указанный на документе, чтобы убедиться в его подлинности и статусе.</p>
+
+  <div class="search">
+    <input type="text" id="idInput" placeholder="Напр. CS-2026-000123" autocomplete="off" spellcheck="false">
+    <button id="checkBtn">Проверить</button>
+  </div>
+  <div class="hint">ID вида CS-ГГГГ-XXXXXX — в правом верхнем углу сертификата и рядом с QR-кодом.</div>
+
+  <div class="result" id="result"></div>
+</div></main>
+
+<script>
+const P=new URLSearchParams(location.search);
+const input=document.getElementById('idInput');
+const result=document.getElementById('result');
+let DB=null;
+
+function fmt(s){ if(!s) return "—"; const p=s.split("-"); return p.length===3? p[2]+"."+p[1]+"."+p[0] : s; }
+function esc(s){ return String(s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+
+async function loadDB(){
+  if(DB) return DB;
+  try{ const r=await fetch('certificates.json',{cache:'no-store'}); DB=await r.json(); }catch(e){ DB={}; }
+  return DB;
+}
+
+function render(kind,id,rec){
+  const map={
+    valid:{cls:'ok',icon:'<path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',h:'Сертификат действителен',s:'Подлинность подтверждена'},
+    expired:{cls:'expired',icon:'<path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>',h:'Срок действия истёк',s:'Сертификат был подлинным, но истёк — нужна повторная проверка'},
+    revoked:{cls:'revoked',icon:'<path d="M12 8v5M12 16.5v.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>',h:'Сертификат отозван',s:'Этот сертификат более не действителен'},
+    notfound:{cls:'notfound',icon:'<path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>',h:'Сертификат не найден',s:'Проверьте ID. Такого сертификата в реестре нет'}
+  };
+  const m=map[kind];
+  let rows='';
+  if(rec){
+    rows=`
+      <div class="rrow"><span class="k">Номер</span><span class="v">${esc(id)}</span></div>
+      <div class="rrow"><span class="k">Кандидат</span><span class="v">${esc(rec.initials||'—')}${rec.role?' · '+esc(rec.role):''}</span></div>
+      <div class="rrow"><span class="k">Проверено</span><span class="v"><span class="checks-line">${(rec.checks||[]).map(c=>`<span class="tag">${esc(c)}</span>`).join('')}</span></span></div>
+      <div class="rrow"><span class="k">Выдан</span><span class="v">${fmt(rec.issued)}</span></div>
+      <div class="rrow"><span class="k">Действителен до</span><span class="v">${fmt(rec.until)}</span></div>`;
+  }
+  result.innerHTML=`<div class="rcard ${m.cls}">
+    <div class="status">
+      <span class="badge"><svg viewBox="0 0 24 24" fill="none">${m.icon}</svg></span>
+      <div><h2>${m.h}</h2><div class="st-sub">${m.s}</div></div>
+    </div>
+    ${rows}
+    <div class="privacy">В целях защиты персональных данных на публичной странице показываются только инициалы и состав проверки. Полное имя сверьте с самим сертификатом. Проверка отражает статус на текущий момент.</div>
+  </div>`;
+  result.classList.add('on');
+}
+
+function statusOf(rec){
+  if(rec.status==='revoked') return 'revoked';
+  if(rec.status==='expired') return 'expired';
+  // авто-истечение по дате until
+  if(rec.until){ const u=new Date(rec.until+'T23:59:59'); if(!isNaN(u) && u < new Date()) return 'expired'; }
+  return 'valid';
+}
+
+async function check(){
+  const id=(input.value||'').trim().toUpperCase();
+  if(!id){ input.focus(); return; }
+  const db=await loadDB();
+  const rec=db[id];
+  if(!rec){ render('notfound',id,null); return; }
+  render(statusOf(rec),id,rec);
+}
+
+document.getElementById('checkBtn').addEventListener('click',check);
+input.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); });
+
+// авто-проверка если пришли по ссылке ?id=...
+const qid=P.get('id');
+if(qid){ input.value=qid; check(); }
+</script>
+</body>
+</html>

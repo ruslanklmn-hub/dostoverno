@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Заявка на проверку кандидата — Достоверно</title>
+<title>Заявка на проверку кандидата — Серталис</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
@@ -75,7 +75,7 @@ textarea{resize:vertical;min-height:92px}
 <div class="hero-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
 
 <header><div class="nav">
-  <a href="index.html" class="logo"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4-4.5" stroke="#05122a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Достоверно</a>
+  <a href="index.html" class="logo"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4-4.5" stroke="#05122a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Серталис</a>
   <a href="index.html" class="back">← На главную</a>
 </div></header>
 
@@ -189,7 +189,7 @@ form.addEventListener('submit',async (e)=>{
   if(!validate()) return;
   const data={};
   new FormData(form).forEach((v,k)=>data[k]=v);
-  data._subject="Новая заявка на проверку кандидата — Достоверно";
+  data._subject="Новая заявка на проверку кандидата — Серталис";
   data._template="table";
 
   submitBtn.disabled=true; submitBtn.textContent="Отправляем…";

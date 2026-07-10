@@ -1,0 +1,10 @@
+{
+  "CS-2026-000123": {
+    "initials": "К. А.",
+    "role": "Senior Backend Developer",
+    "checks": ["Личность", "Анти-дипфейк", "Опыт работы"],
+    "issued": "2026-07-10",
+    "until": "2027-01-10",
+    "status": "valid"
+  }
+}
